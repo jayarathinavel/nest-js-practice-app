@@ -9,4 +9,14 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('protected')
+  getProtected(): string {
+    return 'Protected route';
+  }
+
+  @Get('public')
+  getPublic(): string {
+    return 'Public route';
+  }
 }
