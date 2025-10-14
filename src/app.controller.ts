@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { JwtGuard } from './auth/jwt.guard';
 
 @Controller()
 export class AppController {
@@ -18,5 +19,15 @@ export class AppController {
   @Get('public')
   getPublic(): string {
     return 'Public route';
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('tasks')
+  getTasks() {
+    return [
+      { id: 1, title: 'Complete documentation' },
+      { id: 2, title: 'Fix UI bugs' },
+      { id: 3, title: 'Review PR #42' },
+    ];
   }
 }

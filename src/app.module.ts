@@ -5,9 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthMiddleware } from './auth.middleware';
 import { PublicApiModule } from './public-api/public-api.module';
-import * as crypto from 'crypto';
-(global as any).crypto = crypto;
-
+import { AuthModule } from './auth/auth.module';
+// import * as crypto from 'crypto';
+// (global as any).crypto = crypto;
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // Makes env variables globally available
@@ -26,6 +26,7 @@ import * as crypto from 'crypto';
       }),
     }),
     PublicApiModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
