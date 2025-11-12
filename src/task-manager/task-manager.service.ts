@@ -14,6 +14,7 @@ export class TaskManagerService {
       title: createTaskManagerDto.title,
       description: createTaskManagerDto.description ?? '',
       status: createTaskManagerDto.status ?? 'pending',
+      reference: createTaskManagerDto.reference ?? '',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
