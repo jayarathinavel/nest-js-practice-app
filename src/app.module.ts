@@ -7,6 +7,7 @@ import { AuthMiddleware } from './auth.middleware';
 import { PublicApiModule } from './public-api/public-api.module';
 import { AuthModule } from './auth/auth.module';
 import { TaskManagerModule } from './task-manager/task-manager.module';
+import { WorkLogModule } from './work-log/work-log.module';
 // import * as crypto from 'crypto';
 // (global as any).crypto = crypto;
 @Module({
@@ -29,6 +30,7 @@ import { TaskManagerModule } from './task-manager/task-manager.module';
     PublicApiModule,
     AuthModule,
     TaskManagerModule,
+    WorkLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
