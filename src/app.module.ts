@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AuthMiddleware } from './auth.middleware';
 import { PublicApiModule } from './public-api/public-api.module';
 import { AuthModule } from './auth/auth.module';
+import { TaskManagerModule } from './task-manager/task-manager.module';
 // import * as crypto from 'crypto';
 // (global as any).crypto = crypto;
 @Module({
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     PublicApiModule,
     AuthModule,
+    TaskManagerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
