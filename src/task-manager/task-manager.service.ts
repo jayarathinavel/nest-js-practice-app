@@ -1,47 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { TaskManager } from './entities/task-manager.entity';
 import { CreateTaskManagerDto } from './dto/create-task-manager.dto';
 import { UpdateTaskManagerDto } from './dto/update-task-manager.dto';
-import { TaskManager } from './entities/task-manager.entity';
 
 @Injectable()
 export class TaskManagerService {
-  private tasks: TaskManager[] = [];
-  private nextId = 1;
+  constructor(
+    @InjectRepository(TaskManager)
+    private readonly repo: Repository<TaskManager>,
+  ) {}
 
-  create(createTaskManagerDto: CreateTaskManagerDto): TaskManager {
-    const task: TaskManager = {
-      id: this.nextId++,
-      title: createTaskManagerDto.title,
-      description: createTaskManagerDto.description ?? '',
-      status: createTaskManagerDto.status ?? 'pending',
-      reference: createTaskManagerDto.reference ?? '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.tasks.push(task);
-    return task;
+  create(createTaskManagerDto: CreateTaskManagerDto): Promise<TaskManager> {
+    const task = this.repo.create(createTaskManagerDto);
+    return this.repo.save(task);
   }
 
-  findAll(): TaskManager[] {
-    return this.tasks;
+  findAll(userId: number): Promise<TaskManager[]> {
+    return this.repo.find({ where: { userId } });
   }
 
-  findOne(id: number): TaskManager {
-    const task = this.tasks.find((t) => t.id === id);
+  async findOne(id: number): Promise<TaskManager> {
+    const task = await this.repo.findOne({ where: { id } });
     if (!task) throw new NotFoundException(`Task with ID ${id} not found`);
     return task;
   }
 
-  update(id: number, updateTaskManagerDto: UpdateTaskManagerDto): TaskManager {
-    const task = this.findOne(id);
+  async update(id: number, updateTaskManagerDto: UpdateTaskManagerDto): Promise<TaskManager> {
+    const task = await this.findOne(id);
     Object.assign(task, updateTaskManagerDto);
-    task.updatedAt = new Date();
-    return task;
+    return this.repo.save(task);
   }
 
-  remove(id: number): void {
-    const index = this.tasks.findIndex((t) => t.id === id);
-    if (index === -1) throw new NotFoundException(`Task with ID ${id} not found`);
-    this.tasks.splice(index, 1);
+  async remove(id: number): Promise<void> {
+    const result = await this.repo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
   }
 }

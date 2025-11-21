@@ -1,6 +1,10 @@
-import { IsString, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsOptional, IsIn, IsNumber } from 'class-validator';
 
 export class CreateTaskManagerDto {
+
+  @IsNumber()
+  userId: number;
+
   @IsString()
   title: string;
 
@@ -10,7 +14,7 @@ export class CreateTaskManagerDto {
 
   @IsOptional()
   @IsIn(['pending', 'in-progress', 'completed'])
-  status?: 'pending' | 'in-progress' | 'completed' = 'pending';
+  status?: 'pending' | 'in-progress' | 'completed';
 
   @IsOptional()
   @IsString()

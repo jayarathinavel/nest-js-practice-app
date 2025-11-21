@@ -1,46 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { WorkLog } from './entities/work-log.entity';
 import { CreateWorkLogDto } from './dto/create-work-log.dto';
 import { UpdateWorkLogDto } from './dto/update-work-log.dto';
-import { WorkLog } from './entities/work-log.entity';
 
 @Injectable()
 export class WorkLogService {
-  private worklogs: WorkLog[] = [];
-  private nextId = 1;
+  constructor(
+    @InjectRepository(WorkLog)
+    private readonly repo: Repository<WorkLog>,
+  ) {}
 
-  create(dto: CreateWorkLogDto): WorkLog {
-    const worklog: WorkLog = {
-      id: this.nextId++,
-      date: dto.date,
-      done: dto.done || '',
-      todo: dto.todo || '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.worklogs.unshift(worklog); // latest first
-    return worklog;
+  create(dto: CreateWorkLogDto): Promise<WorkLog> {
+    const log = this.repo.create({
+      ...dto,
+    });
+    return this.repo.save(log);
   }
 
-  findAll(): WorkLog[] {
-    return this.worklogs;
+  findAll(userId: number): Promise<WorkLog[]> {
+    return this.repo.find({
+      where: { userId },
+      order: { date: 'DESC' }
+    });
   }
 
-  findOne(id: number): WorkLog {
-    const log = this.worklogs.find((l) => l.id === id);
+  async findOne(id: number): Promise<WorkLog> {
+    const log = await this.repo.findOne({ where: { id } });
     if (!log) throw new NotFoundException(`WorkLog with ID ${id} not found`);
     return log;
   }
 
-  update(id: number, dto: UpdateWorkLogDto): WorkLog {
-    const log = this.findOne(id);
+  async update(id: number, dto: UpdateWorkLogDto): Promise<WorkLog> {
+    const log = await this.findOne(id);
     Object.assign(log, dto);
-    log.updatedAt = new Date();
-    return log;
+    return this.repo.save(log);
   }
 
-  remove(id: number): void {
-    const index = this.worklogs.findIndex((l) => l.id === id);
-    if (index === -1) throw new NotFoundException(`WorkLog with ID ${id} not found`);
-    this.worklogs.splice(index, 1);
+  async remove(id: number): Promise<void> {
+    const result = await this.repo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`WorkLog with ID ${id} not found`);
+    }
   }
 }
