@@ -1,7 +1,10 @@
+import { Type } from 'class-transformer';
 import { IsString, IsOptional, IsIn, IsNumber } from 'class-validator';
 
 export class CreateTaskManagerDto {
 
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   userId: number;
 
