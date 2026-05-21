@@ -14,8 +14,8 @@ export class TaskManager {
   @Column({ nullable: true })
   description?: string;
 
-  @Column({ type: 'enum', enum: ['pending', 'in-progress', 'completed'], default: 'pending' })
-  status: 'pending' | 'in-progress' | 'completed';
+  @Column({ type: 'enum', enum: ['pending', 'in-progress', 'completed', 'cancelled'], default: 'pending' })
+  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
 
   @Column({ nullable: true })
   reference?: string;

@@ -16,8 +16,8 @@ export class CreateTaskManagerDto {
   description?: string;
 
   @IsOptional()
-  @IsIn(['pending', 'in-progress', 'completed'])
-  status?: 'pending' | 'in-progress' | 'completed';
+  @IsIn(['pending', 'in-progress', 'completed', 'cancelled'])
+  status?: 'pending' | 'in-progress' | 'completed' | 'cancelled';
 
   @IsOptional()
   @IsString()
